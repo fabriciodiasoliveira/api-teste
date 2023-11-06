@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,3 +22,5 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/notas', [App\Http\Controllers\NotasController::class, 'index'])->name('notas');
+Route::get('/notas/agrupar', [App\Http\Controllers\NotasController::class, 'agrupar'])->name('notas.agrupar');
+Route::get('/notas/totaisentregas', [App\Http\Controllers\NotasController::class, 'totais'])->name('notas.totais');

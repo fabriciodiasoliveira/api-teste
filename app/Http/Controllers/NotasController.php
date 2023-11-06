@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Nota;
+use Illuminate\Support\Facades\Log;
 
 class NotasController extends Controller
 {
@@ -12,11 +13,6 @@ class NotasController extends Controller
     public function __construct(){
         $this->notas = new Nota();
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $notas = $this->notas->getNotas();
@@ -25,19 +21,23 @@ class NotasController extends Controller
 
     public function agrupar()
     {
-        //
+        $notas = $this->notas->getNotas();
+        $notasCollection = collect($notas);
+        $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
+        return response()->json($notasOrdenadas);
+    }
+    public function totais()
+    {
+        $notas = $this->notas->getNotas();
+        $notasCollection = collect($notas);
+        $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
+        $total = $notasOrdenadas->groupBy('cnpj_remete')->map(function ($row) {
+            return $row->sum('valor');
+        });
+
+        return response()->json($total);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
