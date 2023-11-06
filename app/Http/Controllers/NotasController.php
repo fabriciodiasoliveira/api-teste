@@ -3,9 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use App\Models\Nota;
 
 class NotasController extends Controller
 {
+    private $notas;
+    public function __construct(){
+        $this->notas = new Nota();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -13,15 +19,11 @@ class NotasController extends Controller
      */
     public function index()
     {
-        //
+        $notas = $this->notas->getNotas();
+        return response()->json($notas);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function agrupar()
     {
         //
     }
