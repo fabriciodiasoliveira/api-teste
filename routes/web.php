@@ -23,4 +23,6 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/notas', [App\Http\Controllers\NotasController::class, 'index'])->name('notas');
 Route::get('/notas/agrupar', [App\Http\Controllers\NotasController::class, 'agrupar'])->name('notas.agrupar');
-Route::get('/notas/totaisentregas', [App\Http\Controllers\NotasController::class, 'totais'])->name('notas.totais');
+Route::get('/notas/totaisentregas', [App\Http\Controllers\NotasController::class, 'totaisEntregas'])->name('notas.totais');
+Route::get('/notas/totaisconcluidos', [App\Http\Controllers\NotasController::class, 'totaisConcluidos'])->name('notas.totais.concluido');
+Route::get('/notas/totaisnaoconcluidos', [App\Http\Controllers\NotasController::class, 'totaisNaoConcluidos'])->name('notas.totais.nao.concluido');
