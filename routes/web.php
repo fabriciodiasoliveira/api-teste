@@ -26,3 +26,4 @@ Route::get('/notas/agrupar', [App\Http\Controllers\NotasController::class, 'agru
 Route::get('/notas/totaisentregas', [App\Http\Controllers\NotasController::class, 'totaisEntregas'])->name('notas.totais');
 Route::get('/notas/totaisconcluidos', [App\Http\Controllers\NotasController::class, 'totaisConcluidos'])->name('notas.totais.concluido');
 Route::get('/notas/totaisnaoconcluidos', [App\Http\Controllers\NotasController::class, 'totaisNaoConcluidos'])->name('notas.totais.nao.concluido');
+Route::get('/notas/vaireceber/{id}', [App\Http\Controllers\NotasController::class, 'vaiReceber'])->name('notas.vai.receber');

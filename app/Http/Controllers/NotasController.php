@@ -25,7 +25,7 @@ class NotasController extends Controller implements InterfaceController
         $notas = $this->notas->getNotas();
         $notasCollection = collect($notas);
         $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
-        return response()->json($notasOrdenadas);
+        return response()->json($notasOrdenadas, 200);
     }
     public function totaisEntregas()
     {
@@ -41,6 +41,83 @@ class NotasController extends Controller implements InterfaceController
     {
         $notas = $this->notas->getNotas();
 
+        $notasEntregues = [];
+        foreach ($notas as $row) {
+            if (isset($row->dt_entrega)) {
+                /**
+                 * Convertendo as strings para datas legíveis pelo interpretador
+                 */
+                $dt_emis = str_replace("/", "-",
+                    $row->dt_emis);
+                $dt_emis = strtotime($dt_emis);
+
+                $dt_entrega = str_replace("/", "-",
+                    $row->dt_entrega);
+                /**
+                 * Convertengo as strings para datas e convertendo para dias
+                 */
+                $dt_entrega = strtotime($dt_entrega);
+                $secs = $dt_entrega - $dt_emis;
+                $days = $secs / 86400;
+                /**
+                 * Verificando se a diferença de dias e menor que 2
+                 */
+                if($days <=2){
+                    $notasEntregues[] = $row;
+                }
+            }
+        }
+
+        $notasCollection = collect($notasEntregues);
+
+        $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
+        $total = $notasOrdenadas->groupBy('cnpj_remete')->map(function ($row) {
+            return $row->sum('valor');
+        });
+
+        return response()->json($total, 200);
+    }
+    public function totaisNaoConcluidos()
+    {
+        $notas = $this->notas->getNotas();
+
+        $notasEntregues = [];
+        foreach ($notas as $row) {
+            $secs = 0;
+            /**
+             * Convertendo as strings para datas legíveis pelo interpretador
+             */
+            $dt_emis = str_replace("/", "-",
+                $row->dt_emis);
+            $dt_emis = strtotime($dt_emis);
+            if(isset($row->dt_entrega)){
+                $dt_entrega = str_replace("/", "-",
+                    $row->dt_entrega);
+                /**
+                 * Convertengo as strings para datas e convertendo para dias
+                 */
+                $dt_entrega = strtotime($dt_entrega);
+                $secs = $dt_entrega - $dt_emis;
+                $days = $secs / 86400;
+            }
+            /**
+             * Verificando se a diferença de dias e menor que 2
+             */
+            if($days > 2){
+                $notasEntregues[] = $row;
+            }
+        }
+
+        $notasCollection = collect($notasEntregues);
+        $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
+        $total = $notasOrdenadas->groupBy('cnpj_remete')->map(function ($row) {
+            return $row->sum('valor');
+        });
+
+        return response()->json($total, 200);
+    }
+    public function vaiReceber($id){
+        $notas = $this->notas->getNotas();
         $notasEntregues = [];
         foreach ($notas as $row) {
             if ($row->status == 'COMPROVADO') {
@@ -60,44 +137,16 @@ class NotasController extends Controller implements InterfaceController
                     $notasEntregues[] = $row;
                 }
             }
-            Log::info($row->nome_remete);
-            Log::info($row->status);
-            Log::info($row->dt_emis);
-            if(isset($row->dt_entrega)){
-                Log::info($row->dt_entrega);
-            }
-            Log::info($dt_entrega);
-            Log::info($row->valor);
         }
-
         $notasCollection = collect($notasEntregues);
-        $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
-        $total = $notasOrdenadas->groupBy('cnpj_remete')->map(function ($row) {
+        $total = $notasCollection->groupBy('cnpj_remete')->map(function ($row) {
             return $row->sum('valor');
         });
-
-        return response()->json($total, 200);
+        $value =
+        [
+            "valor" => $total->get($id)
+        ];
+        return response()->json($value, 200);
     }
-    public function totaisNaoConcluidos()
-    {
-        $notas = $this->notas->getNotas();
 
-        $notasEntregues = [];
-        foreach ($notas as $row) {
-            if ($row->status == 'ABERTO') {
-                $notasEntregues[] = $row;
-            }
-        }
-
-        $notasCollection = collect($notasEntregues);
-        $notasOrdenadas = $notasCollection->sortBy('cnpj_remete', SORT_REGULAR, true)->values();
-        $total = $notasOrdenadas->groupBy('cnpj_remete')->map(function ($row) {
-            return $row->sum('valor');
-        });
-
-        return response()->json($total, 200);
-    }
-    public function totaisNaoRecebidos(){
-
-    }
 }

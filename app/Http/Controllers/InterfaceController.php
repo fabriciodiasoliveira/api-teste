@@ -8,5 +8,5 @@
         public function totaisEntregas();
         public function totaisConcluidos();
         public function totaisNaoConcluidos();
-        public function totaisNaoRecebidos();
+        public function vaiReceber($id);
     }
