@@ -19,7 +19,6 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/notas', [App\Http\Controllers\NotasController::class, 'index'])->name('notas');
 Route::get('/notas/agrupar', [App\Http\Controllers\NotasController::class, 'agrupar'])->name('notas.agrupar');
@@ -27,3 +26,4 @@ Route::get('/notas/totaisentregas', [App\Http\Controllers\NotasController::class
 Route::get('/notas/totaisconcluidos', [App\Http\Controllers\NotasController::class, 'totaisConcluidos'])->name('notas.totais.concluido');
 Route::get('/notas/totaisnaoconcluidos', [App\Http\Controllers\NotasController::class, 'totaisNaoConcluidos'])->name('notas.totais.nao.concluido');
 Route::get('/notas/vaireceber/{id}', [App\Http\Controllers\NotasController::class, 'vaiReceber'])->name('notas.vai.receber');
+Route::get('/notas/deixoudereceber/{id}', [App\Http\Controllers\NotasController::class, 'deixouDeReceber'])->name('notas.deixou.de.receber');

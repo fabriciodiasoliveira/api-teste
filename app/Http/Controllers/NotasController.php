@@ -101,7 +101,7 @@ class NotasController extends Controller implements InterfaceController
                 $days = $secs / 86400;
             }
             /**
-             * Verificando se a diferença de dias e menor que 2
+             * Verificando se a diferença de dias e maior que 2
              */
             if($days > 2){
                 $notasEntregues[] = $row;
@@ -120,22 +120,66 @@ class NotasController extends Controller implements InterfaceController
         $notas = $this->notas->getNotas();
         $notasEntregues = [];
         foreach ($notas as $row) {
-            if ($row->status == 'COMPROVADO') {
+            if (isset($row->dt_entrega)) {
+                /**
+                 * Convertendo as strings para datas legíveis pelo interpretador
+                 */
                 $dt_emis = str_replace("/", "-",
                     $row->dt_emis);
                 $dt_emis = strtotime($dt_emis);
 
                 $dt_entrega = str_replace("/", "-",
                     $row->dt_entrega);
-                if($dt_entrega != null){
-                    $dt_entrega = strtotime($dt_entrega);
-                }
-
+                /**
+                 * Convertengo as strings para datas e convertendo para dias
+                 */
+                $dt_entrega = strtotime($dt_entrega);
                 $secs = $dt_entrega - $dt_emis;
                 $days = $secs / 86400;
-                if($days >=2){
+                /**
+                 * Verificando se a diferença de dias e menor que 2
+                 */
+                if($days <=2){
                     $notasEntregues[] = $row;
                 }
+            }
+        }
+        $notasCollection = collect($notasEntregues);
+        $total = $notasCollection->groupBy('cnpj_remete')->map(function ($row) {
+            return $row->sum('valor');
+        });
+        $value =
+        [
+            "valor" => $total->get($id)
+        ];
+        return response()->json($value, 200);
+    }
+    public function deixouDeReceber($id){
+        $notas = $this->notas->getNotas();
+        $notasEntregues = [];
+        foreach ($notas as $row) {
+            $secs = 0;
+            /**
+             * Convertendo as strings para datas legíveis pelo interpretador
+             */
+            $dt_emis = str_replace("/", "-",
+                $row->dt_emis);
+            $dt_emis = strtotime($dt_emis);
+            if(isset($row->dt_entrega)){
+                $dt_entrega = str_replace("/", "-",
+                    $row->dt_entrega);
+                /**
+                 * Convertengo as strings para datas e convertendo para dias
+                 */
+                $dt_entrega = strtotime($dt_entrega);
+                $secs = $dt_entrega - $dt_emis;
+                $days = $secs / 86400;
+            }
+            /**
+             * Verificando se a diferença de dias e maior que 2
+             */
+            if($days > 2){
+                $notasEntregues[] = $row;
             }
         }
         $notasCollection = collect($notasEntregues);
