@@ -13,13 +13,21 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+/**
+ * @author Fabrício Dias de Oliveira <fabricio858585@gmail.com>
+ * @link http://www.phpdoc.org/docs/latest/index.html
+ * @package helper
+ */
 Route::get('/', function () {
     return view('welcome');
 });
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+/**
+     * @api {get} /notas Exibir todas as notas
+     * @ Exibe todas as notas detalhadas na ordem fornecida pela outra API.
+     */
 Route::get('/notas', [App\Http\Controllers\NotasController::class, 'index'])->name('notas');
 Route::get('/notas/agrupar', [App\Http\Controllers\NotasController::class, 'agrupar'])->name('notas.agrupar');
 Route::get('/notas/totaisentregas', [App\Http\Controllers\NotasController::class, 'totaisEntregas'])->name('notas.totais');
