@@ -148,9 +148,13 @@ class NotasController extends Controller implements InterfaceController
         $total = $notasCollection->groupBy('cnpj_remete')->map(function ($row) {
             return $row->sum('valor');
         });
+        $value = $total->get($id);
+        if ($value == null){
+            $value = 0;
+        }
         $value =
         [
-            "valor" => $total->get($id)
+            "valor" => $value
         ];
         return response()->json($value, 200);
     }
